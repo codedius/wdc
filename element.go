@@ -66,7 +66,7 @@ type elementsResponse struct {
 // ElementFind command is used to find an element in the current browsing context.
 //
 // https://www.w3.org/TR/webdriver/#find-element
-func (c *client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
+func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
 	if by == "" {
 		return "", errors.New("locator strategy is required")
 	}
@@ -109,7 +109,7 @@ func (c *client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 // ElementsFind command is used to find elements in the current browsing context.
 //
 // https://www.w3.org/TR/webdriver/#find-elements
-func (c *client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
+func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
 	if by == "" {
 		return nil, errors.New("locator strategy is required")
 	}
@@ -157,7 +157,7 @@ func (c *client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 // ElementFindFrom command is used to find an element from element in the current browsing context.
 //
 // https://www.w3.org/TR/webdriver/#find-element-from-element
-func (c *client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
+func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}
@@ -200,7 +200,7 @@ func (c *client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 // ElementsFindFrom command is used to find elements from element in the current browsing context.
 //
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
-func (c *client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
+func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
 	if eid == "" {
 		return nil, errors.New("element ID is required")
 	}
@@ -251,7 +251,7 @@ func (c *client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 // ElementClick command is used to click element.
 //
 // https://www.w3.org/TR/webdriver/#element-click
-func (c *client) ElementClick(ctx context.Context, eid ElementID) error {
+func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	if eid == "" {
 		return errors.New("element ID is required")
 	}
@@ -274,7 +274,7 @@ func (c *client) ElementClick(ctx context.Context, eid ElementID) error {
 // ElementClear command is used to click element.
 //
 // https://www.w3.org/TR/webdriver/#element-clear
-func (c *client) ElementClear(ctx context.Context, eid ElementID) error {
+func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	if eid == "" {
 		return errors.New("element ID is required")
 	}
@@ -297,7 +297,7 @@ func (c *client) ElementClear(ctx context.Context, eid ElementID) error {
 // ElementSendKeys command is used to send the provided keys to the element.
 //
 // https://www.w3.org/TR/webdriver/#element-send-keys
-func (c *client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
+func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
 		return errors.New("element ID is required")
 	}
@@ -338,7 +338,7 @@ func (c *client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 // ElementAttribute command is used to get element attribute.
 //
 // https://www.w3.org/TR/webdriver/#get-element-attribute
-func (c *client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
+func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}
@@ -366,7 +366,7 @@ func (c *client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 // ElementProperty command is used to get element property.
 //
 // https://www.w3.org/TR/webdriver/#get-element-property
-func (c *client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
+func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}
@@ -394,7 +394,7 @@ func (c *client) ElementProperty(ctx context.Context, eid ElementID, prop string
 // ElementCSSValue command is used to get element CSS property value.
 //
 // https://www.w3.org/TR/webdriver/#get-element-css-value
-func (c *client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
+func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}
@@ -422,7 +422,7 @@ func (c *client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 // ElementText command is used to get element property.
 //
 // https://www.w3.org/TR/webdriver/#get-element-text
-func (c *client) ElementText(ctx context.Context, eid ElementID) (string, error) {
+func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}
@@ -447,7 +447,7 @@ func (c *client) ElementText(ctx context.Context, eid ElementID) (string, error)
 // ElementTagName command is used to get element tag name.
 //
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
-func (c *client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
+func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
 		return "", errors.New("element ID is required")
 	}

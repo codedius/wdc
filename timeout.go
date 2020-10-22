@@ -42,7 +42,7 @@ type TimeoutsResponse struct {
 // Timeouts returns the timeouts associated with the current session.
 //
 // https://www.w3.org/TR/webdriver/#get-timeouts
-func (c *client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
+func (c *Client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
 	route := fmt.Sprintf("session/%s/timeouts", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
@@ -63,7 +63,7 @@ func (c *client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
 // TimeoutElementFind specifies a time to wait for the element location strategy to complete when locating an element.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *client) TimeoutElementFind(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) error {
 	r := &timeoutRequest{
 		Implicit: uint(timeout / time.Millisecond),
 	}
@@ -92,7 +92,7 @@ func (c *client) TimeoutElementFind(ctx context.Context, timeout time.Duration) 
 // TimeoutPageLoad provides the timeout limit used to interrupt an explicit navigation attempt.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) error {
 	r := &timeoutPageLoadRequest{
 		PageLoad: uint(timeout / time.Millisecond),
 	}
@@ -121,7 +121,7 @@ func (c *client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) err
 // TimeoutScript specifies when to interrupt a script that is being evaluated.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *client) TimeoutScript(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutScript(ctx context.Context, timeout time.Duration) error {
 	r := &timeoutScriptRequest{
 		Script: uint(timeout / time.Millisecond),
 	}

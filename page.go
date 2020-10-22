@@ -13,7 +13,7 @@ import (
 // PageRefresh command causes the browser to reload the page in the current top-level browsing context.
 //
 // https://www.w3.org/TR/webdriver/#refresh
-func (c *client) PageRefresh(ctx context.Context) error {
+func (c *Client) PageRefresh(ctx context.Context) error {
 	route := fmt.Sprintf("session/%s/refresh", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, nil)
@@ -32,7 +32,7 @@ func (c *client) PageRefresh(ctx context.Context) error {
 // PageURL command returns the current URL.
 //
 // https://www.w3.org/TR/webdriver/#get-current-url
-func (c *client) PageURL(ctx context.Context) (string, error) {
+func (c *Client) PageURL(ctx context.Context) (string, error) {
 	route := fmt.Sprintf("session/%s/url", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
@@ -54,7 +54,7 @@ func (c *client) PageURL(ctx context.Context) (string, error) {
 //
 // This is equivalent to calling document.title.
 // https://www.w3.org/TR/webdriver/#get-title
-func (c *client) PageTitle(ctx context.Context) (string, error) {
+func (c *Client) PageTitle(ctx context.Context) (string, error) {
 	route := fmt.Sprintf("session/%s/title", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)

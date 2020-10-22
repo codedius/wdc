@@ -1,4 +1,4 @@
-// Package webdriver provides simple REST client for a remote web driver server.
+// Package webdriver provides simple REST Client for a remote web driver server.
 package wdc
 
 import (
@@ -22,15 +22,15 @@ type Session struct {
 	URL string
 }
 
-// client for a server API.
-type client struct {
+// Client for a server API.
+type Client struct {
 	session *Session
 	client  *http.Client
 	url     *url.URL
 }
 
-// New returns a new web driver REST client instance.
-func New(s *Session) (*client, error) {
+// New returns a new web driver REST Client instance.
+func New(s *Session) (*Client, error) {
 	if s == nil {
 		return nil, errors.New("session is empty")
 	}
@@ -47,7 +47,7 @@ func New(s *Session) (*client, error) {
 		return nil, err
 	}
 
-	c := &client{
+	c := &Client{
 		session: s,
 		client:  httpc,
 		url:     u,
@@ -57,7 +57,7 @@ func New(s *Session) (*client, error) {
 }
 
 // prepare creates a server request.
-func (c *client) prepare(method string, path string, body io.Reader) (*http.Request, error) {
+func (c *Client) prepare(method string, path string, body io.Reader) (*http.Request, error) {
 	p, err := url.Parse(path)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (c *client) prepare(method string, path string, body io.Reader) (*http.Requ
 // do sends a server request and returns server response.
 //
 // The provided ctx must be non-nil. If it is canceled or time out, ctx.Err() will be returned.
-func (c *client) do(ctx context.Context, req *http.Request, v interface{}) error {
+func (c *Client) do(ctx context.Context, req *http.Request, v interface{}) error {
 	req = req.WithContext(ctx)
 
 	resp, err := c.client.Do(req)

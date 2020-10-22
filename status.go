@@ -51,7 +51,7 @@ type StatusResponse struct {
 // but may additionally include arbitrary meta information that is specific to the implementation.
 //
 // https://www.w3.org/TR/webdriver/#status
-func (c *client) Status(ctx context.Context) (*StatusResponse, error) {
+func (c *Client) Status(ctx context.Context) (*StatusResponse, error) {
 	req, err := c.prepare(http.MethodGet, "status", nil)
 	if err != nil {
 		return nil, err

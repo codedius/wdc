@@ -24,7 +24,7 @@ type navigateRequest struct {
 // NavigateTo command causes the user agent to navigate the current top-level browsing context to a new location.
 //
 // https://www.w3.org/TR/webdriver/#navigate-to
-func (c *client) NavigateTo(ctx context.Context, url string) error {
+func (c *Client) NavigateTo(ctx context.Context, url string) error {
 	if url == "" {
 		return errors.New("URL is required")
 	}
@@ -56,7 +56,7 @@ func (c *client) NavigateTo(ctx context.Context, url string) error {
 //
 // This is equivalent to pressing the back button in the browser chrome or invoking window.history.back.
 // https://www.w3.org/TR/webdriver/#back
-func (c *client) NavigateBack(ctx context.Context) error {
+func (c *Client) NavigateBack(ctx context.Context) error {
 	route := fmt.Sprintf("session/%s/back", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, nil)
@@ -76,7 +76,7 @@ func (c *client) NavigateBack(ctx context.Context) error {
 //
 // This is equivalent to pressing the forward button in the browser chrome or invoking window.history.forward.
 // https://www.w3.org/TR/webdriver/#forward
-func (c *client) NavigateForward(ctx context.Context) error {
+func (c *Client) NavigateForward(ctx context.Context) error {
 	route := fmt.Sprintf("session/%s/forward", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, nil)
