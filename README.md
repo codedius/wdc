@@ -1,4 +1,4 @@
-# WebDriver Client (wdc)
+# Go WebDriver Remote Client
 A Go client library for accessing a remote Selenium session and perform page inspections. Partially (see full list of implemented members in the [doc](https://pkg.go.dev/github.com/codedius/wdc?tab=doc)) complies W3C [specifications](https://www.w3.org/TR/webdriver/). Library is intended to be as simple as possible and not claiming to be full-fledged Selenium client. If you’re looking for that kind of client you can try another awsome project [selenium-go](https://github.com/tebeka/selenium).
 
 ## Installation
@@ -16,8 +16,8 @@ Construct a new client:
 
 ```go
 sess := wdc.Session{
-    ID:  "bb6d-6bb9bd380a11",   // Webdriver session ID
-    URL: "http://example.com",  // Webdriver remote server URL
+    ID:  "bb6d-6bb9bd380a11",   // WebDriver session ID
+    URL: "http://example.com",  // WebDriver remote server URL
 }
 
 client, err := wdc.New(&sess)
