@@ -1,5 +1,5 @@
 # WebDriver Client (wdc)
-A Go client library for accessing a remote Selenium session and perform inspections. Complies W3C [specifications](https://www.w3.org/TR/webdriver/).
+A Go client library for accessing a remote Selenium session and perform inspections. Partially (see full list of implemented members below) Complies W3C [specifications](https://www.w3.org/TR/webdriver/). Library is intended to be as simple as possible and not claiming to be full-fledged Selenium client. If you’re looking for that kind of client you can try another awsome project [selenium-go](https://github.com/tebeka/selenium).
 
 ## Installation
 Use the following command to download this module:
@@ -57,4 +57,7 @@ if err != nil {
 }
 ```
 
-For more info please read library's [documentation](https://pkg.go.dev/github.com/codedius/wdc?tab=doc) from go.dev
+For more info please read library's [documentation](https://pkg.go.dev/github.com/codedius/wdc?tab=doc) from go.dev.
+
+## Implemented members
+
