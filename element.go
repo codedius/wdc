@@ -30,6 +30,7 @@ const (
 //
 // https://www.w3.org/TR/webdriver/#elements
 const WebElementID = "element-6066-11e4-a52e-4f735466cecf"
+const WebElementLegacyID = "ELEMENT"
 
 // ElementID represents an id of a web element.
 type ElementID string
@@ -102,6 +103,9 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 	if id, ok := res.Value[WebElementID]; ok {
 		return id, nil
 	}
+	if id, ok := res.Value[WebElementLegacyID]; ok {
+		return id, nil
+	}
 
 	return "", errors.New("element is not found")
 }
@@ -148,6 +152,10 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 	for i, e := range res.Value {
 		if id, ok := e[WebElementID]; ok {
 			ids[i] = id
+			continue
+		}
+		if id, ok := e[WebElementLegacyID]; ok {
+			ids[i] = id
 		}
 	}
 
@@ -191,6 +199,9 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 	}
 
 	if id, ok := res.Value[WebElementID]; ok {
+		return id, nil
+	}
+	if id, ok := res.Value[WebElementLegacyID]; ok {
 		return id, nil
 	}
 
@@ -241,6 +252,10 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 
 	for i, e := range res.Value {
 		if id, ok := e[WebElementID]; ok {
+			ids[i] = id
+			continue
+		}
+		if id, ok := e[WebElementLegacyID]; ok {
 			ids[i] = id
 		}
 	}
