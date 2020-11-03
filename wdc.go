@@ -14,6 +14,21 @@ import (
 	"strings"
 )
 
+var (
+	ErrorSessionIsEmpty            = errors.New("session is empty")
+	ErrorBaseURLIsEmpty            = errors.New("base URL is empty")
+	ErrorLocatorStrategyIsRequired = errors.New("locator strategy is required")
+	ErrorValueIsRequired           = errors.New("value is required")
+	ErrorElementIsNotFound         = errors.New("element is not found")
+	ErrorElementsAreNotFound       = errors.New("elements are not found")
+	ErrorElementIDIsRequired       = errors.New("element ID is required")
+	ErrorKeysAreRequired           = errors.New("keys are required")
+	ErrorAttributeIsRequired       = errors.New("attribute is required")
+	ErrorPropertyIsRequired        = errors.New("property is required")
+	ErrorCSSPropertyIsRequired     = errors.New("CSS property is required")
+	ErrorURLIsRequired             = errors.New("URL is required")
+)
+
 // Session data to make requests to the server.
 type Session struct {
 	// ID of a remote session
@@ -32,10 +47,10 @@ type Client struct {
 // New returns a new web driver REST Client instance.
 func New(s *Session) (*Client, error) {
 	if s == nil {
-		return nil, errors.New("session is empty")
+		return nil, ErrorSessionIsEmpty
 	}
 	if s.URL == "" {
-		return nil, errors.New("base URL is empty")
+		return nil, ErrorBaseURLIsEmpty
 	}
 
 	s.URL = strings.TrimSuffix(s.URL, "/") + "/"

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 )
@@ -69,10 +68,10 @@ type elementsResponse struct {
 // https://www.w3.org/TR/webdriver/#find-element
 func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
 	if by == "" {
-		return "", errors.New("locator strategy is required")
+		return "", ErrorLocatorStrategyIsRequired
 	}
 	if v == "" {
-		return "", errors.New("value is required")
+		return "", ErrorValueIsRequired
 	}
 
 	r := &elementRequest{
@@ -107,7 +106,7 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 		return id, nil
 	}
 
-	return "", errors.New("element is not found")
+	return "", ErrorElementIsNotFound
 }
 
 // ElementsFind command is used to find elements in the current browsing context.
@@ -115,10 +114,10 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 // https://www.w3.org/TR/webdriver/#find-elements
 func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
 	if by == "" {
-		return nil, errors.New("locator strategy is required")
+		return nil, ErrorLocatorStrategyIsRequired
 	}
 	if v == "" {
-		return nil, errors.New("value is required")
+		return nil, ErrorValueIsRequired
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -144,7 +143,7 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 	}
 
 	if len(res.Value) == 0 {
-		return nil, errors.New("elements are not found")
+		return nil, ErrorElementsAreNotFound
 	}
 
 	ids := make([]ElementID, len(res.Value))
@@ -167,13 +166,13 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 // https://www.w3.org/TR/webdriver/#find-element-from-element
 func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 	if by == "" {
-		return "", errors.New("locator strategy is required")
+		return "", ErrorLocatorStrategyIsRequired
 	}
 	if v == "" {
-		return "", errors.New("value is required")
+		return "", ErrorValueIsRequired
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -205,7 +204,7 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 		return id, nil
 	}
 
-	return "", errors.New("element is not found")
+	return "", ErrorElementIsNotFound
 }
 
 // ElementsFindFrom command is used to find elements from element in the current browsing context.
@@ -213,13 +212,13 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
 func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
 	if eid == "" {
-		return nil, errors.New("element ID is required")
+		return nil, ErrorElementIDIsRequired
 	}
 	if by == "" {
-		return nil, errors.New("locator strategy is required")
+		return nil, ErrorLocatorStrategyIsRequired
 	}
 	if v == "" {
-		return nil, errors.New("value is required")
+		return nil, ErrorValueIsRequired
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -245,7 +244,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 	}
 
 	if len(res.Value) == 0 {
-		return nil, errors.New("elements are not found")
+		return nil, ErrorElementsAreNotFound
 	}
 
 	ids := make([]ElementID, len(res.Value))
@@ -268,7 +267,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 // https://www.w3.org/TR/webdriver/#element-click
 func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return errors.New("element ID is required")
+		return ErrorElementIDIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/click", c.session.ID, eid)
@@ -291,7 +290,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-clear
 func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return errors.New("element ID is required")
+		return ErrorElementIDIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/clear", c.session.ID, eid)
@@ -314,10 +313,10 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-send-keys
 func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
-		return errors.New("element ID is required")
+		return ErrorElementIDIsRequired
 	}
 	if keys == "" {
-		return errors.New("keys is required")
+		return ErrorKeysAreRequired
 	}
 
 	r := &elementSendKeysRequest{Text: keys}
@@ -355,10 +354,10 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 // https://www.w3.org/TR/webdriver/#get-element-attribute
 func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 	if attr == "" {
-		return "", errors.New("attribute is required")
+		return "", ErrorAttributeIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/attribute/%s", c.session.ID, eid, attr)
@@ -383,10 +382,10 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 // https://www.w3.org/TR/webdriver/#get-element-property
 func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 	if prop == "" {
-		return "", errors.New("property is required")
+		return "", ErrorPropertyIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/property/%s", c.session.ID, eid, prop)
@@ -411,10 +410,10 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-css-value
 func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 	if prop == "" {
-		return "", errors.New("CSS property is required")
+		return "", ErrorCSSPropertyIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/css/%s", c.session.ID, eid, prop)
@@ -439,7 +438,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-text
 func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/text", c.session.ID, eid)
@@ -464,7 +463,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
 func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", errors.New("element ID is required")
+		return "", ErrorElementIDIsRequired
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/name", c.session.ID, eid)
