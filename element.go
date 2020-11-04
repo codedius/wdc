@@ -70,16 +70,13 @@ type elementsResponse struct {
 // https://www.w3.org/TR/webdriver/#find-element
 func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
 	if by == "" {
-		return "", ErrorLocatorStrategyIsRequired
+		return "", ErrorLocatorStrategyIsEmpty
 	}
 	if v == "" {
-		return "", ErrorValueIsRequired
+		return "", ErrorValueIsEmpty
 	}
 
-	r := &elementRequest{
-		Using: by,
-		Value: v,
-	}
+	r := &elementRequest{Using: by, Value: v}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
@@ -116,10 +113,10 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 // https://www.w3.org/TR/webdriver/#find-elements
 func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
 	if by == "" {
-		return nil, ErrorLocatorStrategyIsRequired
+		return nil, ErrorLocatorStrategyIsEmpty
 	}
 	if v == "" {
-		return nil, ErrorValueIsRequired
+		return nil, ErrorValueIsEmpty
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -168,13 +165,13 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 // https://www.w3.org/TR/webdriver/#find-element-from-element
 func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 	if by == "" {
-		return "", ErrorLocatorStrategyIsRequired
+		return "", ErrorLocatorStrategyIsEmpty
 	}
 	if v == "" {
-		return "", ErrorValueIsRequired
+		return "", ErrorValueIsEmpty
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -214,13 +211,13 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
 func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
 	if eid == "" {
-		return nil, ErrorElementIDIsRequired
+		return nil, ErrorElementIDIsEmpty
 	}
 	if by == "" {
-		return nil, ErrorLocatorStrategyIsRequired
+		return nil, ErrorLocatorStrategyIsEmpty
 	}
 	if v == "" {
-		return nil, ErrorValueIsRequired
+		return nil, ErrorValueIsEmpty
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -269,7 +266,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 // https://www.w3.org/TR/webdriver/#element-click
 func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return ErrorElementIDIsRequired
+		return ErrorElementIDIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/click", c.session.ID, eid)
@@ -279,12 +276,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // ElementClear command is used to clear an input or textarea element.
@@ -292,7 +284,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-clear
 func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return ErrorElementIDIsRequired
+		return ErrorElementIDIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/clear", c.session.ID, eid)
@@ -302,12 +294,7 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // ElementSendKeys command is used to send provided keys to an element.
@@ -315,10 +302,10 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-send-keys
 func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
-		return ErrorElementIDIsRequired
+		return ErrorElementIDIsEmpty
 	}
 	if keys == "" {
-		return ErrorKeysAreRequired
+		return ErrorKeysAreEmpty
 	}
 
 	r := &elementSendKeysRequest{Text: keys}
@@ -343,12 +330,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // ElementAttribute command is used to get the value of an element's attribute.
@@ -356,10 +338,10 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 // https://www.w3.org/TR/webdriver/#get-element-attribute
 func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 	if attr == "" {
-		return "", ErrorAttributeIsRequired
+		return "", ErrorAttributeIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/attribute/%s", c.session.ID, eid, attr)
@@ -369,7 +351,7 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
@@ -384,10 +366,10 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 // https://www.w3.org/TR/webdriver/#get-element-property
 func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 	if prop == "" {
-		return "", ErrorPropertyIsRequired
+		return "", ErrorPropertyIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/property/%s", c.session.ID, eid, prop)
@@ -397,7 +379,7 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
@@ -412,10 +394,10 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-css-value
 func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 	if prop == "" {
-		return "", ErrorCSSPropertyIsRequired
+		return "", ErrorCSSPropertyIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/css/%s", c.session.ID, eid, prop)
@@ -425,7 +407,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
@@ -440,7 +422,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-text
 func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/text", c.session.ID, eid)
@@ -450,7 +432,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
@@ -465,7 +447,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
 func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/name", c.session.ID, eid)
@@ -475,7 +457,7 @@ func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, err
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
@@ -490,7 +472,7 @@ func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, err
 // https://www.w3.org/TR/webdriver/#take-element-screenshot
 func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsRequired
+		return "", ErrorElementIDIsEmpty
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/screenshot", c.session.ID, eid)
@@ -500,11 +482,61 @@ func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, 
 		return "", err
 	}
 
-	res := new(value)
+	res := new(stringValue)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
 		return "", err
+	}
+
+	return res.Value, nil
+}
+
+// ElementIsSelected command is used to determine if option/input/checkbox/radiobutton element is currently selected.
+//
+// https://www.w3.org/TR/webdriver/#is-element-selected
+func (c *Client) ElementIsSelected(ctx context.Context, eid ElementID) (bool, error) {
+	if eid == "" {
+		return false, ErrorElementIDIsEmpty
+	}
+
+	route := fmt.Sprintf("session/%s/element/%s/selected", c.session.ID, eid)
+
+	req, err := c.prepare(http.MethodGet, route, nil)
+	if err != nil {
+		return false, err
+	}
+
+	res := new(boolValue)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return false, err
+	}
+
+	return res.Value, nil
+}
+
+// ElementIsEnabled command is used to determine if an element is currently enabled.
+//
+// https://www.w3.org/TR/webdriver/#is-element-enabled
+func (c *Client) ElementIsEnabled(ctx context.Context, eid ElementID) (bool, error) {
+	if eid == "" {
+		return false, ErrorElementIDIsEmpty
+	}
+
+	route := fmt.Sprintf("session/%s/element/%s/enabled", c.session.ID, eid)
+
+	req, err := c.prepare(http.MethodGet, route, nil)
+	if err != nil {
+		return false, err
+	}
+
+	res := new(boolValue)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return false, err
 	}
 
 	return res.Value, nil

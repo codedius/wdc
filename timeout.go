@@ -81,12 +81,7 @@ func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) 
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // TimeoutPageLoad command is used to set the amount of time to interrupt a navigation attempt.
@@ -110,12 +105,7 @@ func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) err
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // TimeoutScript command is used to set the amount of time to interrupt a script that is being evaluated.
@@ -139,10 +129,5 @@ func (c *Client) TimeoutScript(ctx context.Context, timeout time.Duration) error
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }

@@ -25,7 +25,7 @@ type navigateRequest struct {
 // https://www.w3.org/TR/webdriver/#navigate-to
 func (c *Client) NavigateTo(ctx context.Context, url string) error {
 	if url == "" {
-		return ErrorURLIsRequired
+		return ErrorURLIsEmpty
 	}
 
 	r := &navigateRequest{URL: url}
@@ -43,12 +43,7 @@ func (c *Client) NavigateTo(ctx context.Context, url string) error {
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // NavigateBack command is used to navigate backwards in the browser history, if possible.
@@ -63,12 +58,7 @@ func (c *Client) NavigateBack(ctx context.Context) error {
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }
 
 // NavigateForward command is used to navigate forwards in the browser history, if possible.
@@ -83,10 +73,5 @@ func (c *Client) NavigateForward(ctx context.Context) error {
 		return err
 	}
 
-	err = c.do(ctx, req, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.do(ctx, req, nil)
 }

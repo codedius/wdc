@@ -14,20 +14,9 @@ import (
 	"strings"
 )
 
-var (
-	ErrorSessionIsEmpty            = errors.New("session is empty")
-	ErrorBaseURLIsEmpty            = errors.New("base URL is empty")
-	ErrorLocatorStrategyIsRequired = errors.New("locator strategy is required")
-	ErrorValueIsRequired           = errors.New("value is required")
-	ErrorElementIsNotFound         = errors.New("element is not found")
-	ErrorElementsAreNotFound       = errors.New("elements are not found")
-	ErrorElementIDIsRequired       = errors.New("element ID is required")
-	ErrorKeysAreRequired           = errors.New("keys are required")
-	ErrorAttributeIsRequired       = errors.New("attribute is required")
-	ErrorPropertyIsRequired        = errors.New("property is required")
-	ErrorCSSPropertyIsRequired     = errors.New("CSS property is required")
-	ErrorURLIsRequired             = errors.New("URL is required")
-)
+//
+// TYPES
+//
 
 // Session data to make requests to the server.
 type Session struct {
@@ -43,6 +32,10 @@ type Client struct {
 	client  *http.Client
 	url     *url.URL
 }
+
+//
+// MAIN
+//
 
 // New returns a new web driver REST Client instance.
 func New(s *Session) (*Client, error) {
@@ -147,8 +140,41 @@ func check(r *http.Response) error {
 }
 
 //
+// RESPONSES
+//
+
+// stringValue is a simplified string response from the server.
+type stringValue struct {
+	Value string `json:"value"`
+}
+
+// boolValue is a simplified bool response from the server.
+type boolValue struct {
+	Value bool `json:"value"`
+}
+
+//
 // ERRORS
 //
+
+var (
+	ErrorSessionIsEmpty         = errors.New("session is empty")
+	ErrorBaseURLIsEmpty         = errors.New("base URL is empty")
+	ErrorLocatorStrategyIsEmpty = errors.New("locator strategy is empty")
+	ErrorValueIsEmpty           = errors.New("value is empty")
+	ErrorElementIsNotFound      = errors.New("element is not found")
+	ErrorElementsAreNotFound    = errors.New("elements are not found")
+	ErrorElementIDIsEmpty       = errors.New("element ID is empty")
+	ErrorKeysAreEmpty           = errors.New("keys are empty")
+	ErrorAttributeIsEmpty       = errors.New("attribute is empty")
+	ErrorPropertyIsEmpty        = errors.New("property is empty")
+	ErrorCSSPropertyIsEmpty     = errors.New("CSS property is empty")
+	ErrorURLIsEmpty             = errors.New("URL is empty")
+	ErrorWindowIDIsEmpty        = errors.New("window ID is empty")
+	ErrorWindowHeightIsEmpty    = errors.New("window height is empty")
+	ErrorWindowWidthIsEmpty     = errors.New("window width is empty")
+	ErrorScriptIsEmpty          = errors.New("script is empty")
+)
 
 type ErrorResponse struct {
 	// SessionID is an ID of the WebDriver session.
@@ -192,13 +218,4 @@ func safeclose(c io.Closer) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-//
-// RESPONSES
-//
-
-// value is a simplified response from the server.
-type value struct {
-	Value string `json:"value"`
 }
