@@ -16,8 +16,8 @@ Construct a new client:
 
 ```go
 sess := wdc.Session{
-    ID:  "bb6d-6bb9bd380a11",   // WebDriver session ID
-    URL: "http://example.com",  // WebDriver remote server URL
+    ID:  "ba97d362c7880e1adc7b81e613c665c6",   // webdriver session ID
+    URL: "http://example.com",  	       // webdriver remote server URL
 }
 
 client, err := wdc.New(&sess)
@@ -32,25 +32,25 @@ Perform inspections. For example:
 ```go
 ctx := context.Background()
 
-// Navigate to the page
+// navigate to the page
 err = client.NavigateTo(ctx, "http://example.com") 
 if err != nil {
     // error handling
 }
 
-// Set timeout to find the element
+// set timeout to find the element
 err = client.TimeoutElementFind(ctx, 10*time.Second)
 if err != nil {
     // error handling
 }
 
-// Get element ID to perform further inspections
-eid, err := client.ElementFind(ctx, wdc.ByXPath, "//div[@class=my-class]")
+// get element's ID to perform further inspections
+eid, err := client.ElementFind(ctx, wdc.ByXPath, "//div[@class='my-class']")
 if err != nil {
     // error handling
 }
 	
-// Get element's text
+// get element's text
 text, err := client.ElementText(ctx, eid)
 if err != nil {
     // error handling
