@@ -39,7 +39,7 @@ type TimeoutsResponse struct {
 // METHODS
 //
 
-// Timeouts returns the timeouts associated with the current session.
+// Timeouts command is used to return the timeouts associated with the current session.
 //
 // https://www.w3.org/TR/webdriver/#get-timeouts
 func (c *Client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
@@ -60,7 +60,7 @@ func (c *Client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
 	return res, nil
 }
 
-// TimeoutElementFind specifies a time to wait for the element location strategy to complete when locating an element.
+// TimeoutElementFind command is used to set the amount of time the driver should wait when searching for elements.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
 func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) error {
@@ -89,7 +89,7 @@ func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) 
 	return nil
 }
 
-// TimeoutPageLoad provides the timeout limit used to interrupt an explicit navigation attempt.
+// TimeoutPageLoad command is used to set the amount of time to interrupt a navigation attempt.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
 func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) error {
@@ -118,7 +118,7 @@ func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) err
 	return nil
 }
 
-// TimeoutScript specifies when to interrupt a script that is being evaluated.
+// TimeoutScript command is used to set the amount of time to interrupt a script that is being evaluated.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
 func (c *Client) TimeoutScript(ctx context.Context, timeout time.Duration) error {

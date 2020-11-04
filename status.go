@@ -47,8 +47,7 @@ type StatusResponse struct {
 // METHODS
 //
 
-// Status returns information about whether a remote end is in a state in which it can create new sessions,
-// but may additionally include arbitrary meta information that is specific to the implementation.
+// Status command is used to return the server's current status.
 //
 // https://www.w3.org/TR/webdriver/#status
 func (c *Client) Status(ctx context.Context) (*StatusResponse, error) {

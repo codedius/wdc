@@ -20,7 +20,7 @@ type navigateRequest struct {
 // METHODS
 //
 
-// NavigateTo command causes the user agent to navigate the current top-level browsing context to a new location.
+// NavigateTo command is used to navigate to a new URL.
 //
 // https://www.w3.org/TR/webdriver/#navigate-to
 func (c *Client) NavigateTo(ctx context.Context, url string) error {
@@ -51,9 +51,9 @@ func (c *Client) NavigateTo(ctx context.Context, url string) error {
 	return nil
 }
 
-// NavigateBack command causes the browser to traverse one step backward in the joint session history of the current top-level browsing context.
+// NavigateBack command is used to navigate backwards in the browser history, if possible.
 //
-// This is equivalent to pressing the back button in the browser chrome or invoking window.history.back.
+// This is equivalent to pressing the back button in the browser or invoking window.history.back.
 // https://www.w3.org/TR/webdriver/#back
 func (c *Client) NavigateBack(ctx context.Context) error {
 	route := fmt.Sprintf("session/%s/back", c.session.ID)
@@ -71,9 +71,9 @@ func (c *Client) NavigateBack(ctx context.Context) error {
 	return nil
 }
 
-// NavigateForward command causes the browser to traverse one step forwards in the joint session history of the current top-level browsing context.
+// NavigateForward command is used to navigate forwards in the browser history, if possible.
 //
-// This is equivalent to pressing the forward button in the browser chrome or invoking window.history.forward.
+// This is equivalent to pressing the forward button in the browser or invoking window.history.forward.
 // https://www.w3.org/TR/webdriver/#forward
 func (c *Client) NavigateForward(ctx context.Context) error {
 	route := fmt.Sprintf("session/%s/forward", c.session.ID)

@@ -1,4 +1,4 @@
-// Package webdriver provides simple REST Client for a remote web driver server.
+// Package wdc provides simple REST Client for a remote web driver server.
 package wdc
 
 import (

@@ -10,7 +10,7 @@ import (
 // METHODS
 //
 
-// PageRefresh command causes the browser to reload the page in the current top-level browsing context.
+// PageRefresh command is used to refresh the current page.
 //
 // https://www.w3.org/TR/webdriver/#refresh
 func (c *Client) PageRefresh(ctx context.Context) error {
@@ -29,7 +29,7 @@ func (c *Client) PageRefresh(ctx context.Context) error {
 	return nil
 }
 
-// PageURL command returns the current URL.
+// PageURL command is used to retrieve the URL of the current page.
 //
 // https://www.w3.org/TR/webdriver/#get-current-url
 func (c *Client) PageURL(ctx context.Context) (string, error) {
@@ -50,12 +50,33 @@ func (c *Client) PageURL(ctx context.Context) (string, error) {
 	return res.Value, nil
 }
 
-// PageTitle command returns the document title of the current top-level browsing context.
+// PageTitle command is used to get the current page title.
 //
 // This is equivalent to calling document.title.
 // https://www.w3.org/TR/webdriver/#get-title
 func (c *Client) PageTitle(ctx context.Context) (string, error) {
 	route := fmt.Sprintf("session/%s/title", c.session.ID)
+
+	req, err := c.prepare(http.MethodGet, route, nil)
+	if err != nil {
+		return "", err
+	}
+
+	res := new(value)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return "", err
+	}
+
+	return res.Value, nil
+}
+
+// PageScreenshot command is used to take a screenshot of the current page and return base64 string.
+//
+// https://www.w3.org/TR/webdriver/#take-screenshot
+func (c *Client) PageScreenshot(ctx context.Context) (string, error) {
+	route := fmt.Sprintf("session/%s/screenshot", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {

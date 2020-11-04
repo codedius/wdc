@@ -12,7 +12,7 @@ import (
 // TYPES
 //
 
-// LocatorStrategy is an enumerated attribute deciding what technique should be used to search for elements in the current browsing context.
+// LocatorStrategy is an enumerated attribute deciding what technique should be used to search for elements.
 //
 // https://www.w3.org/TR/webdriver/#locator-strategies
 type LocatorStrategy string
@@ -29,6 +29,8 @@ const (
 //
 // https://www.w3.org/TR/webdriver/#elements
 const WebElementID = "element-6066-11e4-a52e-4f735466cecf"
+
+// WebElementLegacyID is the legacy constant.
 const WebElementLegacyID = "ELEMENT"
 
 // ElementID represents an id of a web element.
@@ -63,7 +65,7 @@ type elementsResponse struct {
 // METHODS
 //
 
-// ElementFind command is used to find an element in the current browsing context.
+// ElementFind command is used to find an element.
 //
 // https://www.w3.org/TR/webdriver/#find-element
 func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
@@ -109,7 +111,7 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 	return "", ErrorElementIsNotFound
 }
 
-// ElementsFind command is used to find elements in the current browsing context.
+// ElementsFind command is used to find elements.
 //
 // https://www.w3.org/TR/webdriver/#find-elements
 func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
@@ -161,7 +163,7 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 	return ids, nil
 }
 
-// ElementFindFrom command is used to find an element from element in the current browsing context.
+// ElementFindFrom command is used to find an element from element.
 //
 // https://www.w3.org/TR/webdriver/#find-element-from-element
 func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
@@ -207,7 +209,7 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 	return "", ErrorElementIsNotFound
 }
 
-// ElementsFindFrom command is used to find elements from element in the current browsing context.
+// ElementsFindFrom command is used to find elements from an element.
 //
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
 func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
@@ -262,7 +264,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 	return ids, nil
 }
 
-// ElementClick command is used to click element.
+// ElementClick command is used to click on an element.
 //
 // https://www.w3.org/TR/webdriver/#element-click
 func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
@@ -285,7 +287,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	return nil
 }
 
-// ElementClear command is used to click element.
+// ElementClear command is used to clear an input or textarea element.
 //
 // https://www.w3.org/TR/webdriver/#element-clear
 func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
@@ -308,7 +310,7 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	return nil
 }
 
-// ElementSendKeys command is used to send the provided keys to the element.
+// ElementSendKeys command is used to send provided keys to an element.
 //
 // https://www.w3.org/TR/webdriver/#element-send-keys
 func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
@@ -349,7 +351,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 	return nil
 }
 
-// ElementAttribute command is used to get element attribute.
+// ElementAttribute command is used to get the value of an element's attribute.
 //
 // https://www.w3.org/TR/webdriver/#get-element-attribute
 func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
@@ -377,7 +379,7 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 	return res.Value, nil
 }
 
-// ElementProperty command is used to get element property.
+// ElementProperty command is used to get the value of an element's property.
 //
 // https://www.w3.org/TR/webdriver/#get-element-property
 func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
@@ -405,7 +407,7 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 	return res.Value, nil
 }
 
-// ElementCSSValue command is used to get element CSS property value.
+// ElementCSSValue command is used to get the value of an element's CSS property.
 //
 // https://www.w3.org/TR/webdriver/#get-element-css-value
 func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
@@ -433,7 +435,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 	return res.Value, nil
 }
 
-// ElementText command is used to get element property.
+// ElementText command is used to get the text of an element.
 //
 // https://www.w3.org/TR/webdriver/#get-element-text
 func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
@@ -458,7 +460,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 	return res.Value, nil
 }
 
-// ElementTagName command is used to get element tag name.
+// ElementTagName command is used to get a tag name of an element.
 //
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
 func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
@@ -467,6 +469,31 @@ func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, err
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/name", c.session.ID, eid)
+
+	req, err := c.prepare(http.MethodGet, route, nil)
+	if err != nil {
+		return "", err
+	}
+
+	res := new(value)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return "", err
+	}
+
+	return res.Value, nil
+}
+
+// ElementScreenshot command is used to take a screenshot of an element.
+//
+// https://www.w3.org/TR/webdriver/#take-element-screenshot
+func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, error) {
+	if eid == "" {
+		return "", ErrorElementIDIsRequired
+	}
+
+	route := fmt.Sprintf("session/%s/element/%s/screenshot", c.session.ID, eid)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
