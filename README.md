@@ -1,5 +1,5 @@
 # Go WebDriver Remote Client
-A Go client library for accessing a remote webdriver session and perform page inspections. Partially (see full list of implemented members in the [doc](https://pkg.go.dev/github.com/codedius/wdc?tab=doc)) complies W3C [specifications](https://www.w3.org/TR/webdriver/). Library is intended to be as simple as possible and not claiming to be full-fledged webdriver client. If you’re looking for that kind of client you can try another awsome project [selenium-go](https://github.com/tebeka/selenium).
+A Go client library for accessing a remote webdriver session and perform page inspections. Partially (see the full list of implemented members in the [doc](https://pkg.go.dev/github.com/codedius/wdc?tab=doc)) complies W3C [specifications](https://www.w3.org/TR/webdriver/). Library is intended to be as simple as possible and not claiming to be full-fledged webdriver client. If you’re looking for that kind of client you may try another awsome project [selenium-go](https://github.com/tebeka/selenium).
 
 ## Installation
 Use the following command to download this module:
