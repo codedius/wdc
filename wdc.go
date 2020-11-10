@@ -40,10 +40,10 @@ type Client struct {
 // New returns a new web driver REST Client instance.
 func New(s *Session) (*Client, error) {
 	if s == nil {
-		return nil, ErrorSessionIsEmpty
+		return nil, errors.New("session is empty")
 	}
 	if s.URL == "" {
-		return nil, ErrorBaseURLIsEmpty
+		return nil, errors.New("URL is empty")
 	}
 
 	s.URL = strings.TrimSuffix(s.URL, "/") + "/"
@@ -136,6 +136,20 @@ func check(r *http.Response) error {
 		}
 	}
 
+	if errResp.Value.Err != "" {
+		if err, ok := errs[errResp.Value.Err]; ok {
+			return fmt.Errorf("%s: %w", err, errResp)
+		}
+		return errResp
+	}
+
+	// Support legacy status code to define error
+	if errResp.Status != 0 {
+		if err, ok := legacyErrs[errResp.Status]; ok {
+			return fmt.Errorf("%s: %w", err, errResp)
+		}
+	}
+
 	return errResp
 }
 
@@ -158,29 +172,89 @@ type boolValue struct {
 //
 
 var (
-	ErrorSessionIsEmpty         = errors.New("session is empty")
-	ErrorBaseURLIsEmpty         = errors.New("base URL is empty")
-	ErrorLocatorStrategyIsEmpty = errors.New("locator strategy is empty")
-	ErrorValueIsEmpty           = errors.New("value is empty")
-	ErrorElementIsNotFound      = errors.New("element is not found")
-	ErrorElementsAreNotFound    = errors.New("elements are not found")
-	ErrorElementIDIsEmpty       = errors.New("element ID is empty")
-	ErrorKeysAreEmpty           = errors.New("keys are empty")
-	ErrorAttributeIsEmpty       = errors.New("attribute is empty")
-	ErrorPropertyIsEmpty        = errors.New("property is empty")
-	ErrorCSSPropertyIsEmpty     = errors.New("CSS property is empty")
-	ErrorURLIsEmpty             = errors.New("URL is empty")
-	ErrorWindowIDIsEmpty        = errors.New("window ID is empty")
-	ErrorWindowHeightIsEmpty    = errors.New("window height is empty")
-	ErrorWindowWidthIsEmpty     = errors.New("window width is empty")
-	ErrorScriptIsEmpty          = errors.New("script is empty")
+	ErrorElementClickIntercepted = errors.New("element click intercepted")
+	ErrorElementNotInteractable  = errors.New("element not interactable")
+	ErrorInsecureCertificate     = errors.New("insecure certificate")
+	ErrorInvalidArgument         = errors.New("invalid argument")
+	ErrorInvalidCookieDomain     = errors.New("invalid cookie domain")
+	ErrorInvalidElementState     = errors.New("invalid element state")
+	ErrorInvalidSelector         = errors.New("invalid selector")
+	ErrorInvalidSessionID        = errors.New("invalid session id")
+	ErrorJavaScriptError         = errors.New("javascript error")
+	ErrorMoveTargetOutOfBounds   = errors.New("move target out of bounds")
+	ErrorNoSuchAlert             = errors.New("no such alert")
+	ErrorNoSuchCookie            = errors.New("no such cookie")
+	ErrorNoSuchElement           = errors.New("no such element")
+	ErrorNoSuchFrame             = errors.New("no such frame")
+	ErrorNoSuchWindow            = errors.New("no such window")
+	ErrorScriptTimeout           = errors.New("script timeout")
+	ErrorSessionNotCreated       = errors.New("session not created")
+	ErrorStaleElementReference   = errors.New("stale element reference")
+	ErrorTimeout                 = errors.New("timeout")
+	ErrorUnableToSetCookie       = errors.New("unable to set cookie")
+	ErrorUnableToCaptureScreen   = errors.New("unable to capture screen")
+	ErrorUnexpectedAlertOpen     = errors.New("unexpected alert open")
+	ErrorUnknownCommand          = errors.New("unknown command")
+	ErrorUnknownError            = errors.New("unknown error")
+	ErrorUnknownMethod           = errors.New("unknown method")
+	ErrorUnsupportedOperation    = errors.New("unsupported operation")
 )
+
+var errs = map[string]error{
+	"element click intercepted": ErrorElementClickIntercepted,
+	"element not interactable":  ErrorElementNotInteractable,
+	"insecure certificate":      ErrorInsecureCertificate,
+	"invalid argument":          ErrorInvalidArgument,
+	"invalid cookie domain":     ErrorInvalidCookieDomain,
+	"invalid element state":     ErrorInvalidElementState,
+	"invalid selector":          ErrorInvalidSelector,
+	"invalid session id":        ErrorInvalidSessionID,
+	"javascript error":          ErrorJavaScriptError,
+	"move target out of bounds": ErrorMoveTargetOutOfBounds,
+	"no such alert":             ErrorNoSuchAlert,
+	"no such cookie":            ErrorNoSuchCookie,
+	"no such element":           ErrorNoSuchElement,
+	"no such frame":             ErrorNoSuchFrame,
+	"no such window":            ErrorNoSuchWindow,
+	"script timeout":            ErrorScriptTimeout,
+	"session not created":       ErrorSessionNotCreated,
+	"stale element reference":   ErrorStaleElementReference,
+	"timeout":                   ErrorTimeout,
+	"unable to set cookie":      ErrorUnableToSetCookie,
+	"unable to capture screen":  ErrorUnableToCaptureScreen,
+	"unexpected alert open":     ErrorUnexpectedAlertOpen,
+	"unknown command":           ErrorUnknownCommand,
+	"unknown error":             ErrorUnknownError,
+	"unknown method":            ErrorUnknownMethod,
+	"unsupported operation":     ErrorUnsupportedOperation,
+}
+
+var legacyErrs = map[int]error{
+	7:  ErrorNoSuchElement,
+	8:  ErrorNoSuchFrame,
+	9:  ErrorUnknownCommand,
+	10: ErrorStaleElementReference,
+	12: ErrorInvalidElementState,
+	13: ErrorUnknownError,
+	17: ErrorJavaScriptError,
+	21: ErrorTimeout,
+	23: ErrorNoSuchWindow,
+	24: ErrorInvalidCookieDomain,
+	25: ErrorUnableToSetCookie,
+	26: ErrorUnexpectedAlertOpen,
+	28: ErrorScriptTimeout,
+	32: ErrorInvalidSelector,
+	33: ErrorSessionNotCreated,
+	34: ErrorMoveTargetOutOfBounds,
+}
 
 type ErrorResponse struct {
 	// SessionID is an ID of the WebDriver session.
 	SessionID string `json:"sessionId"`
 	// Value is an WebDriver error.
 	Value ErrorValue `json:"value"`
+	// Status is a legacy response status code.
+	Status int `json:"status"`
 }
 
 // ErrorValue contains information about a failure of a command.
@@ -205,7 +279,7 @@ type ErrorStackTrace struct {
 }
 
 func (e *ErrorResponse) Error() string {
-	return fmt.Sprintf("%s: %s\n", e.Value.Err, e.Value.Message)
+	return e.Value.Message
 }
 
 //

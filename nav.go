@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -25,7 +26,7 @@ type navigateRequest struct {
 // https://www.w3.org/TR/webdriver/#navigate-to
 func (c *Client) NavigateTo(ctx context.Context, url string) error {
 	if url == "" {
-		return ErrorURLIsEmpty
+		return errors.New("URL is empty")
 	}
 
 	r := &navigateRequest{URL: url}

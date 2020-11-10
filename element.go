@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -70,10 +71,10 @@ type elementsResponse struct {
 // https://www.w3.org/TR/webdriver/#find-element
 func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
 	if by == "" {
-		return "", ErrorLocatorStrategyIsEmpty
+		return "", errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return "", ErrorValueIsEmpty
+		return "", errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -105,7 +106,7 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 		return id, nil
 	}
 
-	return "", ErrorElementIsNotFound
+	return "", ErrorNoSuchElement
 }
 
 // ElementsFind command is used to find elements.
@@ -113,10 +114,10 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 // https://www.w3.org/TR/webdriver/#find-elements
 func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
 	if by == "" {
-		return nil, ErrorLocatorStrategyIsEmpty
+		return nil, errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return nil, ErrorValueIsEmpty
+		return nil, errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -142,7 +143,7 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 	}
 
 	if len(res.Value) == 0 {
-		return nil, ErrorElementsAreNotFound
+		return nil, ErrorNoSuchElement
 	}
 
 	ids := make([]ElementID, len(res.Value))
@@ -165,13 +166,13 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 // https://www.w3.org/TR/webdriver/#find-element-from-element
 func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 	if by == "" {
-		return "", ErrorLocatorStrategyIsEmpty
+		return "", errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return "", ErrorValueIsEmpty
+		return "", errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -203,7 +204,7 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 		return id, nil
 	}
 
-	return "", ErrorElementIsNotFound
+	return "", ErrorNoSuchElement
 }
 
 // ElementsFindFrom command is used to find elements from an element.
@@ -211,13 +212,13 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
 func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
 	if eid == "" {
-		return nil, ErrorElementIDIsEmpty
+		return nil, errors.New("element ID is empty")
 	}
 	if by == "" {
-		return nil, ErrorLocatorStrategyIsEmpty
+		return nil, errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return nil, ErrorValueIsEmpty
+		return nil, errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -243,7 +244,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 	}
 
 	if len(res.Value) == 0 {
-		return nil, ErrorElementsAreNotFound
+		return nil, ErrorNoSuchElement
 	}
 
 	ids := make([]ElementID, len(res.Value))
@@ -266,7 +267,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 // https://www.w3.org/TR/webdriver/#element-click
 func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return ErrorElementIDIsEmpty
+		return errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/click", c.session.ID, eid)
@@ -284,7 +285,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-clear
 func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	if eid == "" {
-		return ErrorElementIDIsEmpty
+		return errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/clear", c.session.ID, eid)
@@ -302,10 +303,10 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 // https://www.w3.org/TR/webdriver/#element-send-keys
 func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
-		return ErrorElementIDIsEmpty
+		return errors.New("element ID is empty")
 	}
 	if keys == "" {
-		return ErrorKeysAreEmpty
+		return errors.New("keys are empty")
 	}
 
 	r := &elementSendKeysRequest{Text: keys}
@@ -338,10 +339,10 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 // https://www.w3.org/TR/webdriver/#get-element-attribute
 func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 	if attr == "" {
-		return "", ErrorAttributeIsEmpty
+		return "", errors.New("attribute is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/attribute/%s", c.session.ID, eid, attr)
@@ -366,10 +367,10 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 // https://www.w3.org/TR/webdriver/#get-element-property
 func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 	if prop == "" {
-		return "", ErrorPropertyIsEmpty
+		return "", errors.New("property is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/property/%s", c.session.ID, eid, prop)
@@ -394,10 +395,10 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-css-value
 func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 	if prop == "" {
-		return "", ErrorCSSPropertyIsEmpty
+		return "", errors.New("CSS property is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/css/%s", c.session.ID, eid, prop)
@@ -422,7 +423,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 // https://www.w3.org/TR/webdriver/#get-element-text
 func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/text", c.session.ID, eid)
@@ -447,7 +448,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
 func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/name", c.session.ID, eid)
@@ -472,7 +473,7 @@ func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, err
 // https://www.w3.org/TR/webdriver/#take-element-screenshot
 func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, error) {
 	if eid == "" {
-		return "", ErrorElementIDIsEmpty
+		return "", errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/screenshot", c.session.ID, eid)
@@ -497,7 +498,7 @@ func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, 
 // https://www.w3.org/TR/webdriver/#is-element-selected
 func (c *Client) ElementIsSelected(ctx context.Context, eid ElementID) (bool, error) {
 	if eid == "" {
-		return false, ErrorElementIDIsEmpty
+		return false, errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/selected", c.session.ID, eid)
@@ -522,7 +523,7 @@ func (c *Client) ElementIsSelected(ctx context.Context, eid ElementID) (bool, er
 // https://www.w3.org/TR/webdriver/#is-element-enabled
 func (c *Client) ElementIsEnabled(ctx context.Context, eid ElementID) (bool, error) {
 	if eid == "" {
-		return false, ErrorElementIDIsEmpty
+		return false, errors.New("element ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/enabled", c.session.ID, eid)

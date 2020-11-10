@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -126,7 +127,7 @@ func (c *Client) PageScreenshot(ctx context.Context) (string, error) {
 // https://www.w3.org/TR/webdriver/#execute-script
 func (c *Client) PageScript(ctx context.Context, s string, args []interface{}) (string, error) {
 	if s == "" {
-		return "", ErrorScriptIsEmpty
+		return "", errors.New("script is empty")
 	}
 
 	r := &scriptRequest{Script: s, Args: args}
@@ -160,7 +161,7 @@ func (c *Client) PageScript(ctx context.Context, s string, args []interface{}) (
 // https://www.w3.org/TR/webdriver/#execute-script
 func (c *Client) PageScriptAsync(ctx context.Context, s string, args []interface{}) (string, error) {
 	if s == "" {
-		return "", ErrorScriptIsEmpty
+		return "", errors.New("script is empty")
 	}
 
 	r := &scriptRequest{Script: s, Args: args}

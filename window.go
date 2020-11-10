@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -129,7 +130,7 @@ func (c *Client) WindowClose(ctx context.Context) error {
 // https://www.w3.org/TR/webdriver/#switch-to-window
 func (c *Client) WindowSwitch(ctx context.Context, wid string) error {
 	if wid == "" {
-		return ErrorWindowIDIsEmpty
+		return errors.New("window ID is empty")
 	}
 
 	r := &windowRequest{Name: wid}
@@ -176,10 +177,10 @@ func (c *Client) WindowSize(ctx context.Context) (*WindowSize, error) {
 // https://www.w3.org/TR/webdriver/#set-window-rect
 func (c *Client) WindowResize(ctx context.Context, w, h, x, y int) error {
 	if w == 0 {
-		return ErrorWindowWidthIsEmpty
+		return errors.New("window width is empty")
 	}
 	if h == 0 {
-		return ErrorWindowHeightIsEmpty
+		return errors.New("window height is empty")
 	}
 
 	r := &WindowSize{Width: w, Height: h, X: x, Y: y}
@@ -205,7 +206,7 @@ func (c *Client) WindowResize(ctx context.Context, w, h, x, y int) error {
 // https://www.w3.org/TR/webdriver/#maximize-window
 func (c *Client) WindowMaximize(ctx context.Context, wid string) (*WindowSize, error) {
 	if wid == "" {
-		return nil, ErrorWindowIDIsEmpty
+		return nil, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/maximize", c.session.ID)
@@ -238,7 +239,7 @@ func (c *Client) WindowMaximize(ctx context.Context, wid string) (*WindowSize, e
 // https://www.w3.org/TR/webdriver/#minimize-window
 func (c *Client) WindowMinimize(ctx context.Context, wid string) (*WindowSize, error) {
 	if wid == "" {
-		return nil, ErrorWindowIDIsEmpty
+		return nil, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/minimize", c.session.ID)
@@ -271,7 +272,7 @@ func (c *Client) WindowMinimize(ctx context.Context, wid string) (*WindowSize, e
 // https://www.w3.org/TR/webdriver/#fullscreen-window
 func (c *Client) WindowFullscreen(ctx context.Context, wid string) (*WindowSize, error) {
 	if wid == "" {
-		return nil, ErrorWindowIDIsEmpty
+		return nil, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/fullscreen", c.session.ID)
