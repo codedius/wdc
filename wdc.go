@@ -138,7 +138,7 @@ func check(r *http.Response) error {
 
 	if errResp.Value.Err != "" {
 		if err, ok := errs[errResp.Value.Err]; ok {
-			return fmt.Errorf("%s: %w", err, errResp)
+			return fmt.Errorf("%w: %s", err, errResp)
 		}
 		return errResp
 	}
@@ -146,7 +146,7 @@ func check(r *http.Response) error {
 	// Support legacy status code to define error
 	if errResp.Status != 0 {
 		if err, ok := legacyErrs[errResp.Status]; ok {
-			return fmt.Errorf("%s: %w", err, errResp)
+			return fmt.Errorf("%w: %s", err, errResp)
 		}
 	}
 
