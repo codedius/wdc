@@ -66,7 +66,7 @@ type elementsResponse struct {
 // METHODS
 //
 
-// ElementFind command is used to find an element.
+// ElementFind command is used to find an element by locator strategy with value v.
 //
 // https://www.w3.org/TR/webdriver/#find-element
 func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
@@ -109,7 +109,7 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 	return "", ErrorNoSuchElement
 }
 
-// ElementsFind command is used to find elements.
+// ElementsFind command is used to find elements by locator strategy with value v.
 //
 // https://www.w3.org/TR/webdriver/#find-elements
 func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
@@ -161,7 +161,7 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 	return ids, nil
 }
 
-// ElementFindFrom command is used to find an element from element.
+// ElementFindFrom command is used to find an element by locator strategy with value v from element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#find-element-from-element
 func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
@@ -207,7 +207,7 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 	return "", ErrorNoSuchElement
 }
 
-// ElementsFindFrom command is used to find elements from an element.
+// ElementsFindFrom command is used to find elements by locator strategy with value v from an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
 func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
@@ -262,7 +262,7 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 	return ids, nil
 }
 
-// ElementClick command is used to click on an element.
+// ElementClick command is used to click on an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#element-click
 func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
@@ -280,7 +280,7 @@ func (c *Client) ElementClick(ctx context.Context, eid ElementID) error {
 	return c.do(ctx, req, nil)
 }
 
-// ElementClear command is used to clear an input or textarea element.
+// ElementClear command is used to clear an input or textarea element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#element-clear
 func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
@@ -298,7 +298,7 @@ func (c *Client) ElementClear(ctx context.Context, eid ElementID) error {
 	return c.do(ctx, req, nil)
 }
 
-// ElementSendKeys command is used to send provided keys to an element.
+// ElementSendKeys command is used to send provided keys to an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#element-send-keys
 func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string) error {
@@ -334,7 +334,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 	return c.do(ctx, req, nil)
 }
 
-// ElementAttribute command is used to get the value of an element's attribute.
+// ElementAttribute command is used to get the attribute attr value of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#get-element-attribute
 func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr string) (string, error) {
@@ -362,7 +362,7 @@ func (c *Client) ElementAttribute(ctx context.Context, eid ElementID, attr strin
 	return res.Value, nil
 }
 
-// ElementProperty command is used to get the value of an element's property.
+// ElementProperty command is used to get the property prop value of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#get-element-property
 func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string) (string, error) {
@@ -390,7 +390,7 @@ func (c *Client) ElementProperty(ctx context.Context, eid ElementID, prop string
 	return res.Value, nil
 }
 
-// ElementCSSValue command is used to get the value of an element's CSS property.
+// ElementCSSValue command is used to get the CSS property prop value of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#get-element-css-value
 func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string) (string, error) {
@@ -418,7 +418,7 @@ func (c *Client) ElementCSSValue(ctx context.Context, eid ElementID, prop string
 	return res.Value, nil
 }
 
-// ElementText command is used to get the text of an element.
+// ElementText command is used to get the text of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#get-element-text
 func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error) {
@@ -443,7 +443,7 @@ func (c *Client) ElementText(ctx context.Context, eid ElementID) (string, error)
 	return res.Value, nil
 }
 
-// ElementTagName command is used to get a tag name of an element.
+// ElementTagName command is used to get a tag name of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#get-element-tag-name
 func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, error) {
@@ -468,7 +468,7 @@ func (c *Client) ElementTagName(ctx context.Context, eid ElementID) (string, err
 	return res.Value, nil
 }
 
-// ElementScreenshot command is used to take a screenshot of an element.
+// ElementScreenshot command is used to take a screenshot of an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#take-element-screenshot
 func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, error) {
@@ -493,7 +493,7 @@ func (c *Client) ElementScreenshot(ctx context.Context, eid ElementID) (string, 
 	return res.Value, nil
 }
 
-// ElementIsSelected command is used to determine if option/input/checkbox/radiobutton element is currently selected.
+// ElementIsSelected command is used to determine if option/input/checkbox/radiobutton element with ID eid is currently selected.
 //
 // https://www.w3.org/TR/webdriver/#is-element-selected
 func (c *Client) ElementIsSelected(ctx context.Context, eid ElementID) (bool, error) {
@@ -518,7 +518,7 @@ func (c *Client) ElementIsSelected(ctx context.Context, eid ElementID) (bool, er
 	return res.Value, nil
 }
 
-// ElementIsEnabled command is used to determine if an element is currently enabled.
+// ElementIsEnabled command is used to determine if an element with ID eid is currently enabled.
 //
 // https://www.w3.org/TR/webdriver/#is-element-enabled
 func (c *Client) ElementIsEnabled(ctx context.Context, eid ElementID) (bool, error) {

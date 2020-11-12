@@ -38,7 +38,7 @@ type StatusJava struct {
 // RESPONSES
 //
 
-type StatusResponse struct {
+type Status struct {
 	Status int         `json:"status"`
 	Value  StatusValue `json:"value"`
 }
@@ -50,18 +50,18 @@ type StatusResponse struct {
 // Status command is used to return the server's current status.
 //
 // https://www.w3.org/TR/webdriver/#status
-func (c *Client) Status(ctx context.Context) (*StatusResponse, error) {
+func (c *Client) Status(ctx context.Context) (Status, error) {
 	req, err := c.prepare(http.MethodGet, "status", nil)
 	if err != nil {
-		return nil, err
+		return Status{}, err
 	}
 
-	res := new(StatusResponse)
+	res := new(Status)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return Status{}, err
 	}
 
-	return res, nil
+	return *res, nil
 }

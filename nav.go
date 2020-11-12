@@ -21,7 +21,7 @@ type navigateRequest struct {
 // METHODS
 //
 
-// NavigateTo command is used to navigate to a new URL.
+// NavigateTo command is used to navigate to a new URL url.
 //
 // https://www.w3.org/TR/webdriver/#navigate-to
 func (c *Client) NavigateTo(ctx context.Context, url string) error {

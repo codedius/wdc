@@ -13,6 +13,12 @@ import (
 // REQUESTS
 //
 
+type Timeout struct {
+	Implicit uint `json:"implicit"`
+	PageLoad uint `json:"pageLoad"`
+	Script   uint `json:"script"`
+}
+
 type timeoutRequest struct {
 	Implicit uint `json:"implicit"`
 }
@@ -29,10 +35,8 @@ type timeoutScriptRequest struct {
 // RESPONSES
 //
 
-type TimeoutsResponse struct {
-	Implicit uint `json:"implicit"`
-	PageLoad uint `json:"pageLoad"`
-	Script   uint `json:"script"`
+type timeoutResponse struct {
+	Value Timeout `json:"value"`
 }
 
 //
@@ -42,30 +46,30 @@ type TimeoutsResponse struct {
 // Timeouts command is used to return the timeouts associated with the current session.
 //
 // https://www.w3.org/TR/webdriver/#get-timeouts
-func (c *Client) Timeouts(ctx context.Context) (*TimeoutsResponse, error) {
+func (c *Client) Timeouts(ctx context.Context) (Timeout, error) {
 	route := fmt.Sprintf("session/%s/timeouts", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
-		return nil, err
+		return Timeout{}, err
 	}
 
-	res := new(TimeoutsResponse)
+	res := new(timeoutResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return Timeout{}, err
 	}
 
-	return res, nil
+	return res.Value, nil
 }
 
-// TimeoutElementFind command is used to set the amount of time the driver should wait when searching for elements.
+// TimeoutElementFind command is used to set the amount of time d the driver should wait when searching for elements.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutElementFind(ctx context.Context, d time.Duration) error {
 	r := &timeoutRequest{
-		Implicit: uint(timeout / time.Millisecond),
+		Implicit: uint(d / time.Millisecond),
 	}
 
 	b := new(bytes.Buffer)
@@ -84,12 +88,12 @@ func (c *Client) TimeoutElementFind(ctx context.Context, timeout time.Duration) 
 	return c.do(ctx, req, nil)
 }
 
-// TimeoutPageLoad command is used to set the amount of time to interrupt a navigation attempt.
+// TimeoutPageLoad command is used to set the amount of time d to interrupt a navigation attempt.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutPageLoad(ctx context.Context, d time.Duration) error {
 	r := &timeoutPageLoadRequest{
-		PageLoad: uint(timeout / time.Millisecond),
+		PageLoad: uint(d / time.Millisecond),
 	}
 
 	b := new(bytes.Buffer)
@@ -108,12 +112,12 @@ func (c *Client) TimeoutPageLoad(ctx context.Context, timeout time.Duration) err
 	return c.do(ctx, req, nil)
 }
 
-// TimeoutScript command is used to set the amount of time to interrupt a script that is being evaluated.
+// TimeoutScript command is used to set the amount of time d to interrupt a script that is being evaluated.
 //
 // https://www.w3.org/TR/webdriver/#set-timeouts
-func (c *Client) TimeoutScript(ctx context.Context, timeout time.Duration) error {
+func (c *Client) TimeoutScript(ctx context.Context, d time.Duration) error {
 	r := &timeoutScriptRequest{
-		Script: uint(timeout / time.Millisecond),
+		Script: uint(d / time.Millisecond),
 	}
 
 	b := new(bytes.Buffer)

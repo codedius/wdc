@@ -41,7 +41,7 @@ type windowsResponse struct {
 }
 
 type windowSizeResponse struct {
-	Value *WindowSize `json:"value"`
+	Value WindowSize `json:"value"`
 }
 
 //
@@ -125,7 +125,7 @@ func (c *Client) WindowClose(ctx context.Context) error {
 	return c.do(ctx, req, nil)
 }
 
-// WindowClose command is used to close a window.
+// WindowClose command is used to close a window with ID wid.
 //
 // https://www.w3.org/TR/webdriver/#switch-to-window
 func (c *Client) WindowSwitch(ctx context.Context, wid string) error {
@@ -154,25 +154,25 @@ func (c *Client) WindowSwitch(ctx context.Context, wid string) error {
 // WindowSize command is used to get the size of the specified window.
 //
 // https://www.w3.org/TR/webdriver/#get-window-rect
-func (c *Client) WindowSize(ctx context.Context) (*WindowSize, error) {
+func (c *Client) WindowSize(ctx context.Context) (WindowSize, error) {
 	route := fmt.Sprintf("session/%s/window/rect", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	res := new(windowSizeResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	return res.Value, nil
 }
 
-// WindowResize command is used to change the size of the specified window.
+// WindowResize command is used to change the size (width - w, height - h, coord X - x and coord Y - y) of the specified window.
 //
 // https://www.w3.org/TR/webdriver/#set-window-rect
 func (c *Client) WindowResize(ctx context.Context, w, h, x, y int) error {
@@ -201,12 +201,12 @@ func (c *Client) WindowResize(ctx context.Context, w, h, x, y int) error {
 	return c.do(ctx, req, nil)
 }
 
-// WindowMaximize command is used to maximize the specified window.
+// WindowMaximize command is used to maximize the specified window with ID wid.
 //
 // https://www.w3.org/TR/webdriver/#maximize-window
-func (c *Client) WindowMaximize(ctx context.Context, wid string) (*WindowSize, error) {
+func (c *Client) WindowMaximize(ctx context.Context, wid string) (WindowSize, error) {
 	if wid == "" {
-		return nil, errors.New("window ID is empty")
+		return WindowSize{}, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/maximize", c.session.ID)
@@ -216,30 +216,30 @@ func (c *Client) WindowMaximize(ctx context.Context, wid string) (*WindowSize, e
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	res := new(windowSizeResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	return res.Value, nil
 }
 
-// WindowMinimize command is used to minimize the specified window.
+// WindowMinimize command is used to minimize the specified window with ID wid.
 //
 // https://www.w3.org/TR/webdriver/#minimize-window
-func (c *Client) WindowMinimize(ctx context.Context, wid string) (*WindowSize, error) {
+func (c *Client) WindowMinimize(ctx context.Context, wid string) (WindowSize, error) {
 	if wid == "" {
-		return nil, errors.New("window ID is empty")
+		return WindowSize{}, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/minimize", c.session.ID)
@@ -249,30 +249,30 @@ func (c *Client) WindowMinimize(ctx context.Context, wid string) (*WindowSize, e
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	res := new(windowSizeResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	return res.Value, nil
 }
 
-// WindowFullscreen command is used to fullscreen the specified window.
+// WindowFullscreen command is used to fullscreen the specified window with ID wid.
 //
 // https://www.w3.org/TR/webdriver/#fullscreen-window
-func (c *Client) WindowFullscreen(ctx context.Context, wid string) (*WindowSize, error) {
+func (c *Client) WindowFullscreen(ctx context.Context, wid string) (WindowSize, error) {
 	if wid == "" {
-		return nil, errors.New("window ID is empty")
+		return WindowSize{}, errors.New("window ID is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/window/fullscreen", c.session.ID)
@@ -282,19 +282,19 @@ func (c *Client) WindowFullscreen(ctx context.Context, wid string) (*WindowSize,
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	res := new(windowSizeResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return nil, err
+		return WindowSize{}, err
 	}
 
 	return res.Value, nil

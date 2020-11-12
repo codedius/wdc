@@ -121,7 +121,7 @@ func (c *Client) PageScreenshot(ctx context.Context) (string, error) {
 	return res.Value, nil
 }
 
-// PageScript command is used to inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
+// PageScript command is used to inject a snippet of JavaScript s with arguments args into the page for execution in the context of the currently selected frame.
 //
 // The executed script is assumed to be synchronous and the result of evaluating the script is returned to the client.
 // https://www.w3.org/TR/webdriver/#execute-script
@@ -155,7 +155,7 @@ func (c *Client) PageScript(ctx context.Context, s string, args []interface{}) (
 	return res.Value, nil
 }
 
-// PageScriptAsync command is used to inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
+// PageScriptAsync command is used to inject a snippet of JavaScript s with arguments args into the page for execution in the context of the currently selected frame.
 //
 // The executed script is assumed to be asynchronous and must signal that is done by invoking the provided callback, which is always provided as the final argument to the function. The value to this callback will be returned to the client.
 // https://www.w3.org/TR/webdriver/#execute-script
