@@ -50,6 +50,10 @@ type elementSendKeysRequest struct {
 	Text string `json:"text"`
 }
 
+type elementSendKeysLegacyRequest struct {
+	Value []rune `json:"value"`
+}
+
 //
 // RESPONSES
 //
@@ -310,6 +314,42 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 	}
 
 	r := &elementSendKeysRequest{Text: keys}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return err
+	}
+
+	route := fmt.Sprintf("session/%s/element/%s/value", c.session.ID, eid)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return err
+	}
+
+	res := new(elementsResponse)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return err
+	}
+
+	return c.do(ctx, req, nil)
+}
+
+// ElementSendKeys command is used to send provided keys to an element with ID eid.
+//
+// https://www.w3.org/TR/webdriver/#element-send-keys
+func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys []rune) error {
+	if eid == "" {
+		return errors.New("element ID is empty")
+	}
+	if len(keys) == 0 {
+		return errors.New("keys are empty")
+	}
+
+	r := &elementSendKeysLegacyRequest{Value: keys}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
