@@ -51,7 +51,7 @@ type elementSendKeysRequest struct {
 }
 
 type elementSendKeysLegacyRequest struct {
-	Value []rune `json:"value"`
+	Value []string `json:"value"`
 }
 
 //
@@ -341,7 +341,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 // ElementSendKeys command is used to send provided keys to an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#element-send-keys
-func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys []rune) error {
+func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
 		return errors.New("element ID is empty")
 	}
@@ -349,7 +349,12 @@ func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys 
 		return errors.New("keys are empty")
 	}
 
-	r := &elementSendKeysLegacyRequest{Value: keys}
+	var v []string
+	for _, k := range keys {
+		v = append(v, string(k))
+	}
+
+	r := &elementSendKeysLegacyRequest{Value: v}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
