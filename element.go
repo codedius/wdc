@@ -335,7 +335,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 		return err
 	}
 
-	return c.do(ctx, req, nil)
+	return nil
 }
 
 // ElementSendKeys command is used to send provided keys to an element with ID eid.
@@ -376,7 +376,7 @@ func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys 
 		return err
 	}
 
-	return c.do(ctx, req, nil)
+	return nil
 }
 
 // ElementAttribute command is used to get the attribute attr value of an element with ID eid.
