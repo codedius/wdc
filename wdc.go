@@ -290,6 +290,6 @@ func (e *ErrorResponse) Error() string {
 func safeclose(c io.Closer) {
 	err := c.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 }
