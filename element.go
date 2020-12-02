@@ -26,15 +26,22 @@ const (
 	ByXPath           LocatorStrategy = "xpath"
 )
 
+type WebElement struct {
+	ID    WebElementID
+	Value ElementID
+}
+
 // WebElementID is the string constant defined by the W3C.
 //
 // https://www.w3.org/TR/webdriver/#elements
-const WebElementID = "element-6066-11e4-a52e-4f735466cecf"
+type WebElementID string
 
-// WebElementLegacyID is the legacy constant.
-const WebElementLegacyID = "ELEMENT"
+const (
+	WebElementIDW3C    WebElementID = "element-6066-11e4-a52e-4f735466cecf"
+	WebElementIDLegacy WebElementID = "ELEMENT"
+)
 
-// ElementID represents an id of a web element.
+// ElementID represents an id value of a web element.
 type ElementID string
 
 //
@@ -59,11 +66,11 @@ type elementSendKeysLegacyRequest struct {
 //
 
 type elementResponse struct {
-	Value map[string]ElementID `json:"value"`
+	Value map[WebElementID]ElementID `json:"value"`
 }
 
 type elementsResponse struct {
-	Value []map[string]ElementID `json:"value"`
+	Value []map[WebElementID]ElementID `json:"value"`
 }
 
 //
@@ -73,12 +80,14 @@ type elementsResponse struct {
 // ElementFind command is used to find an element by locator strategy with value v.
 //
 // https://www.w3.org/TR/webdriver/#find-element
-func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (ElementID, error) {
+func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) (WebElement, error) {
+	empty := WebElement{}
+
 	if by == "" {
-		return "", errors.New("locator strategy is empty")
+		return empty, errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return "", errors.New("value is empty")
+		return empty, errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -86,37 +95,133 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
 	route := fmt.Sprintf("session/%s/element", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
 	res := new(elementResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
-	if id, ok := res.Value[WebElementID]; ok {
-		return id, nil
+	if id, ok := res.Value[WebElementIDW3C]; ok {
+		return WebElement{ID: WebElementIDW3C, Value: id}, nil
 	}
-	if id, ok := res.Value[WebElementLegacyID]; ok {
-		return id, nil
+	if id, ok := res.Value[WebElementIDLegacy]; ok {
+		return WebElement{ID: WebElementIDLegacy, Value: id}, nil
 	}
 
-	return "", ErrorNoSuchElement
+	return empty, ErrorNoSuchElement
+}
+
+// ElementFindShadowDOM command is used to find a shadow root of element e.
+func (c *Client) ElementFindShadowDOM(ctx context.Context, e WebElement) (WebElement, error) {
+	empty := WebElement{}
+
+	if e.ID == "" {
+		return empty, errors.New("element web ID is empty")
+	}
+	if e.Value == "" {
+		return empty, errors.New("element ID is empty")
+	}
+
+	var args []interface{}
+	args = append(args, map[WebElementID]ElementID{
+		e.ID: e.Value,
+	})
+
+	r := &scriptRequest{Script: "return arguments[0].shadowRoot", Args: args}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return empty, err
+	}
+
+	route := fmt.Sprintf("session/%s/execute", c.session.ID)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return empty, err
+	}
+
+	res := new(elementResponse)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return empty, err
+	}
+
+	if id, ok := res.Value[WebElementIDW3C]; ok {
+		return WebElement{ID: WebElementIDW3C, Value: id}, nil
+	}
+	if id, ok := res.Value[WebElementIDLegacy]; ok {
+		return WebElement{ID: WebElementIDLegacy, Value: id}, nil
+	}
+
+	return empty, ErrorNoSuchElement
+}
+
+// ElementFindShadowDOMLegacy command is used to find a shadow root of element e.
+func (c *Client) ElementFindShadowDOMLegacy(ctx context.Context, e WebElement) (WebElement, error) {
+	empty := WebElement{}
+
+	if e.ID == "" {
+		return empty, errors.New("element web ID is empty")
+	}
+	if e.Value == "" {
+		return empty, errors.New("element ID is empty")
+	}
+
+	var args []interface{}
+	args = append(args, map[WebElementID]ElementID{
+		e.ID: e.Value,
+	})
+
+	r := &scriptRequest{Script: "return arguments[0].shadowRoot", Args: args}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return empty, err
+	}
+
+	route := fmt.Sprintf("session/%s/execute/sync", c.session.ID)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return empty, err
+	}
+
+	res := new(elementResponse)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return empty, err
+	}
+
+	if id, ok := res.Value[WebElementIDW3C]; ok {
+		return WebElement{ID: WebElementIDW3C, Value: id}, nil
+	}
+	if id, ok := res.Value[WebElementIDLegacy]; ok {
+		return WebElement{ID: WebElementIDLegacy, Value: id}, nil
+	}
+
+	return empty, ErrorNoSuchElement
 }
 
 // ElementsFind command is used to find elements by locator strategy with value v.
 //
 // https://www.w3.org/TR/webdriver/#find-elements
-func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]ElementID, error) {
+func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string) ([]WebElement, error) {
 	if by == "" {
 		return nil, errors.New("locator strategy is empty")
 	}
@@ -150,15 +255,15 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 		return nil, ErrorNoSuchElement
 	}
 
-	ids := make([]ElementID, len(res.Value))
+	ids := make([]WebElement, len(res.Value))
 
 	for i, e := range res.Value {
-		if id, ok := e[WebElementID]; ok {
-			ids[i] = id
+		if id, ok := e[WebElementIDW3C]; ok {
+			ids[i] = WebElement{ID: WebElementIDW3C, Value: id}
 			continue
 		}
-		if id, ok := e[WebElementLegacyID]; ok {
-			ids[i] = id
+		if id, ok := e[WebElementIDLegacy]; ok {
+			ids[i] = WebElement{ID: WebElementIDLegacy, Value: id}
 		}
 	}
 
@@ -168,15 +273,17 @@ func (c *Client) ElementsFind(ctx context.Context, by LocatorStrategy, v string)
 // ElementFindFrom command is used to find an element by locator strategy with value v from element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#find-element-from-element
-func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (ElementID, error) {
+func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) (WebElement, error) {
+	empty := WebElement{}
+
 	if eid == "" {
-		return "", errors.New("element ID is empty")
+		return empty, errors.New("element ID is empty")
 	}
 	if by == "" {
-		return "", errors.New("locator strategy is empty")
+		return empty, errors.New("locator strategy is empty")
 	}
 	if v == "" {
-		return "", errors.New("value is empty")
+		return empty, errors.New("value is empty")
 	}
 
 	r := &elementRequest{Using: by, Value: v}
@@ -184,37 +291,37 @@ func (c *Client) ElementFindFrom(ctx context.Context, eid ElementID, by LocatorS
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/element", c.session.ID, eid)
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
 	res := new(elementResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {
-		return "", err
+		return empty, err
 	}
 
-	if id, ok := res.Value[WebElementID]; ok {
-		return id, nil
+	if id, ok := res.Value[WebElementIDW3C]; ok {
+		return WebElement{ID: WebElementIDW3C, Value: id}, nil
 	}
-	if id, ok := res.Value[WebElementLegacyID]; ok {
-		return id, nil
+	if id, ok := res.Value[WebElementIDLegacy]; ok {
+		return WebElement{ID: WebElementIDLegacy, Value: id}, nil
 	}
 
-	return "", ErrorNoSuchElement
+	return empty, ErrorNoSuchElement
 }
 
 // ElementsFindFrom command is used to find elements by locator strategy with value v from an element with ID eid.
 //
 // https://www.w3.org/TR/webdriver/#find-elements-from-element
-func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]ElementID, error) {
+func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by LocatorStrategy, v string) ([]WebElement, error) {
 	if eid == "" {
 		return nil, errors.New("element ID is empty")
 	}
@@ -251,15 +358,15 @@ func (c *Client) ElementsFindFrom(ctx context.Context, eid ElementID, by Locator
 		return nil, ErrorNoSuchElement
 	}
 
-	ids := make([]ElementID, len(res.Value))
+	ids := make([]WebElement, len(res.Value))
 
 	for i, e := range res.Value {
-		if id, ok := e[WebElementID]; ok {
-			ids[i] = id
+		if id, ok := e[WebElementIDW3C]; ok {
+			ids[i] = WebElement{ID: WebElementIDW3C, Value: id}
 			continue
 		}
-		if id, ok := e[WebElementLegacyID]; ok {
-			ids[i] = id
+		if id, ok := e[WebElementIDLegacy]; ok {
+			ids[i] = WebElement{ID: WebElementIDLegacy, Value: id}
 		}
 	}
 
