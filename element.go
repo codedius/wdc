@@ -338,9 +338,9 @@ func (c *Client) ElementSendKeys(ctx context.Context, eid ElementID, keys string
 	return nil
 }
 
-// ElementSendKeys command is used to send provided keys to an element with ID eid.
+// ElementSendKeysLegacy command is used to send provided keys to an element with ID eid.
 //
-// https://www.w3.org/TR/webdriver/#element-send-keys
+// https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue
 func (c *Client) ElementSendKeysLegacy(ctx context.Context, eid ElementID, keys string) error {
 	if eid == "" {
 		return errors.New("element ID is empty")

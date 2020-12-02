@@ -155,11 +155,79 @@ func (c *Client) PageScript(ctx context.Context, s string, args []interface{}) (
 	return res.Value, nil
 }
 
+// PageScriptLegacy command is used to inject a snippet of JavaScript s with arguments args into the page for execution in the context of the currently selected frame.
+//
+// The executed script is assumed to be synchronous and the result of evaluating the script is returned to the client.
+// https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute
+func (c *Client) PageScriptLegacy(ctx context.Context, s string, args []interface{}) (string, error) {
+	if s == "" {
+		return "", errors.New("script is empty")
+	}
+
+	r := &scriptRequest{Script: s, Args: args}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return "", err
+	}
+
+	route := fmt.Sprintf("session/%s/execute", c.session.ID)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return "", err
+	}
+
+	res := new(stringValue)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return "", err
+	}
+
+	return res.Value, nil
+}
+
 // PageScriptAsync command is used to inject a snippet of JavaScript s with arguments args into the page for execution in the context of the currently selected frame.
 //
 // The executed script is assumed to be asynchronous and must signal that is done by invoking the provided callback, which is always provided as the final argument to the function. The value to this callback will be returned to the client.
 // https://www.w3.org/TR/webdriver/#execute-script
 func (c *Client) PageScriptAsync(ctx context.Context, s string, args []interface{}) (string, error) {
+	if s == "" {
+		return "", errors.New("script is empty")
+	}
+
+	r := &scriptRequest{Script: s, Args: args}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return "", err
+	}
+
+	route := fmt.Sprintf("session/%s/execute/async", c.session.ID)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return "", err
+	}
+
+	res := new(stringValue)
+
+	err = c.do(ctx, req, res)
+	if err != nil {
+		return "", err
+	}
+
+	return res.Value, nil
+}
+
+// PageScriptAsyncLegacy command is used to inject a snippet of JavaScript s with arguments args into the page for execution in the context of the currently selected frame.
+//
+// The executed script is assumed to be asynchronous and must signal that is done by invoking the provided callback, which is always provided as the final argument to the function. The value to this callback will be returned to the client.
+// https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async
+func (c *Client) PageScriptAsyncLegacy(ctx context.Context, s string, args []interface{}) (string, error) {
 	if s == "" {
 		return "", errors.New("script is empty")
 	}
