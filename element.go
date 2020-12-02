@@ -146,7 +146,7 @@ func (c *Client) ElementFindShadowDOM(ctx context.Context, e WebElement) (WebEle
 		return empty, err
 	}
 
-	route := fmt.Sprintf("session/%s/execute", c.session.ID)
+	route := fmt.Sprintf("session/%s/execute/sync", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
@@ -194,7 +194,7 @@ func (c *Client) ElementFindShadowDOMLegacy(ctx context.Context, e WebElement) (
 		return empty, err
 	}
 
-	route := fmt.Sprintf("session/%s/execute/sync", c.session.ID)
+	route := fmt.Sprintf("session/%s/execute", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
