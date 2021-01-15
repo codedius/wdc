@@ -689,16 +689,16 @@ func (c *Client) ElementIsEnabled(ctx context.Context, e WebElement) (bool, erro
 }
 
 // ElementWaitForEnabled sets interval i and amount of time t the driver should wait to determine if an element e is enabled.
-func (c *Client) ElementWaitForEnabled(ctx context.Context, e WebElement, i time.Duration, t time.Duration) (bool, error) {
+func (c *Client) ElementWaitForEnabled(ctx context.Context, e WebElement, i time.Duration, t time.Duration) error {
 	if e.Reference == "" {
-		return false, errors.New("element is empty")
+		return errors.New("element is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/enabled", c.session.ID, e.Reference)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	res := new(boolValue)
@@ -708,14 +708,14 @@ func (c *Client) ElementWaitForEnabled(ctx context.Context, e WebElement, i time
 	for {
 		err = c.do(ctx, req, res)
 		if err != nil {
-			return false, err
+			return err
 		}
 		if res.Value == true {
-			return true, nil
+			return nil
 		}
 
 		if elapsed := time.Since(start); elapsed > t {
-			return false, fmt.Errorf("timeout after %v", elapsed)
+			return fmt.Errorf("timeout after %v", elapsed)
 		}
 		time.Sleep(i)
 	}
@@ -747,16 +747,16 @@ func (c *Client) ElementIsDisplayed(ctx context.Context, e WebElement) (bool, er
 }
 
 // ElementWaitForEnabled sets interval i and amount of time t the driver should wait to determine if an element e is displayed.
-func (c *Client) ElementWaitForDisplayed(ctx context.Context, e WebElement, i time.Duration, t time.Duration) (bool, error) {
+func (c *Client) ElementWaitForDisplayed(ctx context.Context, e WebElement, i time.Duration, t time.Duration) error {
 	if e.Reference == "" {
-		return false, errors.New("element is empty")
+		return errors.New("element is empty")
 	}
 
 	route := fmt.Sprintf("session/%s/element/%s/displayed", c.session.ID, e.Reference)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	res := new(boolValue)
@@ -766,14 +766,14 @@ func (c *Client) ElementWaitForDisplayed(ctx context.Context, e WebElement, i ti
 	for {
 		err = c.do(ctx, req, res)
 		if err != nil {
-			return false, err
+			return err
 		}
 		if res.Value == true {
-			return true, nil
+			return nil
 		}
 
 		if elapsed := time.Since(start); elapsed > t {
-			return false, fmt.Errorf("timeout after %v", elapsed)
+			return fmt.Errorf("timeout after %v", elapsed)
 		}
 		time.Sleep(i)
 	}
