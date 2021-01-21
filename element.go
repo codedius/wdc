@@ -588,6 +588,39 @@ func (c *Client) ElementText(ctx context.Context, e WebElement) (string, error) 
 	return res.Value, nil
 }
 
+// ElementWaitForEnabled sets interval i and amount of time t the driver should wait to determine if an element e is filled.
+func (c *Client) ElementWaitForText(ctx context.Context, e WebElement, i time.Duration, t time.Duration) (string, error) {
+	if e.Reference == "" {
+		return "", errors.New("element is empty")
+	}
+
+	route := fmt.Sprintf("session/%s/element/%s/text", c.session.ID, e.Reference)
+
+	req, err := c.prepare(http.MethodGet, route, nil)
+	if err != nil {
+		return "", err
+	}
+
+	res := new(stringValue)
+
+	start := time.Now()
+
+	for {
+		err = c.do(ctx, req, res)
+		if err != nil {
+			return "", err
+		}
+		if res.Value != "" {
+			return res.Value, nil
+		}
+
+		if elapsed := time.Since(start); elapsed > t {
+			return "", fmt.Errorf("timeout after %v", elapsed)
+		}
+		time.Sleep(i)
+	}
+}
+
 // ElementTagName command is used to get a tag name of an element e.
 //
 // https://www.w3.org/TR/webdriver/#get-element-tag-name

@@ -83,7 +83,7 @@ func (c *Client) PageTitle(ctx context.Context) (string, error) {
 //
 // https://www.w3.org/TR/webdriver/#get-page-source
 func (c *Client) PageSource(ctx context.Context) (string, error) {
-	route := fmt.Sprintf("session/%s/title", c.session.ID)
+	route := fmt.Sprintf("session/%s/source", c.session.ID)
 
 	req, err := c.prepare(http.MethodGet, route, nil)
 	if err != nil {
