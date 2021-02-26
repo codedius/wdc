@@ -121,6 +121,42 @@ func (c *Client) ElementFind(ctx context.Context, by LocatorStrategy, v string) 
 	return WebElement{}, ErrorNoSuchElement
 }
 
+// ElementsWaitForUnload sets interval i and amount of time t the driver should wait to determine if an element e is undefined.
+func (c *Client) ElementWaitForUndefined(ctx context.Context, by LocatorStrategy, v string, i time.Duration, t time.Duration) error {
+	r := &elementRequest{Using: by, Value: v}
+
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(r)
+	if err != nil {
+		return err
+	}
+
+	route := fmt.Sprintf("session/%s/element", c.session.ID)
+
+	req, err := c.prepare(http.MethodPost, route, b)
+	if err != nil {
+		return err
+	}
+
+	res := new(elementResponse)
+
+	start := time.Now()
+
+	for {
+		err = c.do(ctx, req, res)
+		if err != nil && errors.Is(err, ErrorNoSuchElement) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if elapsed := time.Since(start); elapsed > t {
+			return fmt.Errorf("timeout after %v", elapsed)
+		}
+		time.Sleep(i)
+	}
+}
+
 // ElementFindShadowDOM command is used to find a shadow root of element e.
 func (c *Client) ElementFindShadowDOM(ctx context.Context, e WebElement) (WebElement, error) {
 	if e.ID == "" {
@@ -428,7 +464,7 @@ func (c *Client) ElementSendKeys(ctx context.Context, e WebElement, keys string)
 		return err
 	}
 
-	res := new(elementsResponse)
+	res := new(elementResponse)
 
 	err = c.do(ctx, req, res)
 	if err != nil {

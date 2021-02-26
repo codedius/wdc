@@ -14,9 +14,9 @@ import (
 //
 
 type Timeout struct {
-	Implicit uint `json:"implicit"`
-	PageLoad uint `json:"pageLoad"`
-	Script   uint `json:"script"`
+	Implicit time.Duration
+	PageLoad time.Duration
+	Script   time.Duration
 }
 
 type timeoutRequest struct {
@@ -36,7 +36,11 @@ type timeoutScriptRequest struct {
 //
 
 type timeoutResponse struct {
-	Value Timeout `json:"value"`
+	Value struct {
+		Implicit uint `json:"implicit"`
+		PageLoad uint `json:"pageLoad"`
+		Script   uint `json:"script"`
+	} `json:"value"`
 }
 
 //
@@ -61,7 +65,11 @@ func (c *Client) Timeouts(ctx context.Context) (Timeout, error) {
 		return Timeout{}, err
 	}
 
-	return res.Value, nil
+	return Timeout{
+		Implicit: time.Duration(res.Value.Implicit) * time.Millisecond,
+		PageLoad: time.Duration(res.Value.PageLoad) * time.Millisecond,
+		Script:   time.Duration(res.Value.Script) * time.Millisecond,
+	}, nil
 }
 
 // TimeoutElementFind command is used to set the amount of time d the driver should wait when searching for elements.

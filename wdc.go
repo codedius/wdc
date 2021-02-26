@@ -162,6 +162,31 @@ type stringValue struct {
 	Value string `json:"value"`
 }
 
+// UnmarshalJSON first tries to unmarshal the value as string, then defaults to json.RawMessage
+func (s *stringValue) UnmarshalJSON(bytes []byte) error {
+	type alias struct {
+		Value string
+	}
+	al := alias{}
+	// try with string first (we need alias to avoid stack overflow)
+	if err := json.Unmarshal(bytes, &al); err == nil {
+		s.Value = al.Value
+		return nil
+	}
+
+	// now try with raw json, is more forgiving
+	type priv struct {
+		Value json.RawMessage
+	}
+	p := priv{}
+	err := json.Unmarshal(bytes, &p)
+	if err != nil {
+		return err
+	}
+	s.Value = string(p.Value)
+	return nil
+}
+
 // boolValue is a simplified bool response from the server.
 type boolValue struct {
 	Value bool `json:"value"`

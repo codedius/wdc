@@ -130,7 +130,7 @@ func (c *Client) PageScript(ctx context.Context, s string, args []interface{}) (
 		return "", errors.New("script is empty")
 	}
 
-	r := &scriptRequest{Script: s, Args: args}
+	r := &scriptRequest{Script: s, Args: prepareScriptArguments(args)}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
@@ -164,7 +164,7 @@ func (c *Client) PageScriptLegacy(ctx context.Context, s string, args []interfac
 		return "", errors.New("script is empty")
 	}
 
-	r := &scriptRequest{Script: s, Args: args}
+	r := &scriptRequest{Script: s, Args: prepareScriptArguments(args)}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
@@ -198,7 +198,7 @@ func (c *Client) PageScriptAsync(ctx context.Context, s string, args []interface
 		return "", errors.New("script is empty")
 	}
 
-	r := &scriptRequest{Script: s, Args: args}
+	r := &scriptRequest{Script: s, Args: prepareScriptArguments(args)}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
@@ -232,7 +232,7 @@ func (c *Client) PageScriptAsyncLegacy(ctx context.Context, s string, args []int
 		return "", errors.New("script is empty")
 	}
 
-	r := &scriptRequest{Script: s, Args: args}
+	r := &scriptRequest{Script: s, Args: prepareScriptArguments(args)}
 
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(r)
@@ -240,7 +240,7 @@ func (c *Client) PageScriptAsyncLegacy(ctx context.Context, s string, args []int
 		return "", err
 	}
 
-	route := fmt.Sprintf("session/%s/execute/async", c.session.ID)
+	route := fmt.Sprintf("session/%s/execute_async", c.session.ID)
 
 	req, err := c.prepare(http.MethodPost, route, b)
 	if err != nil {
@@ -255,4 +255,20 @@ func (c *Client) PageScriptAsyncLegacy(ctx context.Context, s string, args []int
 	}
 
 	return res.Value, nil
+}
+
+// prepareScriptArguments checks if we have any WebElement args and changes them correctly so that they'll be treated as
+// Elements in javascript
+func prepareScriptArguments(args []interface{}) []interface{} {
+	newArgs := make([]interface{}, len(args))
+	for i, a := range args {
+		if e, isElem := a.(WebElement); isElem {
+			newArgs[i] = map[WebElementID]WebElementReference{
+				e.ID: e.Reference,
+			}
+			continue
+		}
+		newArgs[i] = a
+	}
+	return newArgs
 }
